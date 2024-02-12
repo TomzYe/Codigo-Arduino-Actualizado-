@@ -10,10 +10,22 @@ void setup() {
 
 void loop() {
   if (barcodeSerial.available() > 0) {
-    char barcode[13];  // asumiendo un código de barras de 12 dígitos + caracter de fin de línea
-    barcodeSerial.readBytesUntil('\n', barcode, 13);
+    char barcode[14];  // asumiendo un código de barras de 13 dígitos + caracter de fin de línea
+    barcodeSerial.readBytesUntil('\r', barcode, 14);
+    
+ // Crear un nuevo array sin el carácter de retorno de carro ('\r')
+    char barcodeWithoutCR[14];
+    int j = 0;
+    for (int i = 0; i < strlen(barcode); i++) {
+      if (barcode[i] != '\r') {
+        barcodeWithoutCR[j++] = barcode[i];
+      }
+    }
+    barcodeWithoutCR[j] = '\0';  // Agregar el carácter nulo al final del nuevo array
+
+    // Puedes imprimir o usar el nuevo array sin el carácter de retorno de carro
     #ifdef DEBUG_ENABLED
-      Serial.println(barcode);
+      Serial.print(barcodeWithoutCR);
     #endif
   }
 }
